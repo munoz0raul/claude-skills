@@ -38,7 +38,18 @@ What came back was this table:
 | `ultrathink` | Type this word in your prompt to allocate maximum thinking budget before Claude responds — use for hard architecture decisions or complex debugging |
 | Plan mode (`Shift+Tab`) | Toggle a mode where Claude can read/research but won't change files — outlines steps and asks questions first |
 
-That table alone was worth the exercise. But one line buried in the summary changed my whole afternoon:
+### Key Concepts (Not Commands)
+
+These aren't slash commands — they're patterns worth knowing:
+
+- **Custom skills** — Create `.md` files in `.claude/skills/` (e.g., `codereview.md`) and invoke them by name or natural language. They run the same workflow every time and can be shared via git.
+- **Sub-agents** — Ask Claude to spin up sub-agents in your prompt for parallel work. Each has its own context window; you can set cheaper models (Haiku) for simple tasks.
+- **Agent teams** — Like sub-agents, but agents can talk to each other, share a task list, and assign each other work.
+- **Permissions** — Instead of `--dangerously-skip-permissions`, explicitly allow safe commands and deny destructive ones (deletes, removes) in settings. The deny list takes priority.
+- **CLAUDE.md routing** — Keep CLAUDE.md lean (150–200 lines max); link out to separate files for style guides, business context, etc.
+- **Context7 MCP** — Install this MCP server to give Claude up-to-date library docs (Next.js, React, MongoDB, etc.) before it writes code.
+
+That table alone was worth the exercise. But one concept buried in that last bullet changed my whole afternoon:
 
 > **Custom skills** — Create `.md` files in `.claude/skills/` and invoke them by name or natural language. They run the same workflow every time and can be shared via git.
 
