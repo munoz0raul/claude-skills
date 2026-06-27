@@ -1,0 +1,6 @@
+{
+  "name": "dragonwing",
+  "version": "1.0.0",
+  "description": "Skills for working with Qualcomm Dragonwing IQ-8275 EVK — flashing, serial console, and SSH.",
+  "skills": ["build", "flash", "serial", "ssh"]
+}
