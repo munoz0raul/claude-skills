@@ -1,0 +1,6 @@
+{
+  "name": "notify",
+  "version": "1.0.0",
+  "description": "Notification skills — send a WhatsApp message to the owner when blocked or needing input.",
+  "skills": ["whatsapp"]
+}
