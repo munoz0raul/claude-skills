@@ -143,6 +143,39 @@ That's the shift: from a generic AI assistant to an **environment-aware agent** 
 
 ---
 
+## Teaching Claude to Reach You When It's Stuck
+
+One pattern that comes up constantly with long autonomous tasks: Claude hits a blocker — a device isn't detected, a build fails, a decision needs a human — and just sits there until you check back.
+
+The fix is a notification skill. I set up [CallMeBot](https://www.callmebot.com/) (a free WhatsApp API that takes 30 seconds to activate) and created a `notify` plugin with a single `whatsapp` skill:
+
+```markdown
+---
+description: >
+  Use this skill when you are blocked and need human input to continue, when a
+  long-running task finishes and the user should be notified, or when you
+  encounter an error you cannot resolve autonomously.
+allowed-tools:
+  - Bash(curl *)
+---
+```
+
+The skill body tells Claude to compose a short message, URL-encode it, and fire a `curl` call:
+
+```bash
+MSG="Blocked on flashing step 4 — device not detected in EDL mode. Please check SW2-3 and USB-C cable."
+ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote_plus('$MSG'))")
+curl -s "https://api.callmebot.com/whatsapp.php?phone=OWNER_PHONE&text=${ENCODED}&apikey=OWNER_APIKEY"
+```
+
+The skill lives in its own `notify` plugin (separate from `dragonwing`) so every agent in every project can use it — not just the hardware ones.
+
+Now when I kick off a 90-minute Yocto build and go do something else, I get a WhatsApp message when it finishes or if something breaks mid-way. No more compulsively checking the terminal.
+
+The credentials (phone number + API key) stay in the local skill file only — the version pushed to GitHub uses `OWNER_PHONE` / `OWNER_APIKEY` placeholders.
+
+---
+
 ## Try It Yourself
 
 The plugin structure is straightforward. Start with one skill for the most repetitive thing in your workflow — the thing you find yourself explaining to Claude at the start of every session. Write it as a step-by-step markdown guide, add the frontmatter description that describes when it should activate, and put it in `~/.claude/plugins/<your-plugin>/skills/<name>/SKILL.md`.
