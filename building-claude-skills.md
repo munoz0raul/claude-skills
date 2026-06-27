@@ -176,6 +176,45 @@ The credentials (phone number + API key) stay in the local skill file only — t
 
 ---
 
+## A Status Bar That Shows What Actually Matters
+
+One more thing I set up during this session: a custom status line at the bottom of the terminal that shows live session state.
+
+Claude Code supports a `/statusline` command that lets you plug in a shell script — whatever the script prints becomes the status bar. I asked Claude to build one that shows:
+
+```
+Sonnet 4.6 1M | 88% left (880k) | ctx:12% | $0.0390 | Opus 4.8: 38% left (75k)
+```
+
+Each field serves a purpose:
+
+| Field | Why it matters |
+|---|---|
+| `Sonnet 4.6 1M` | Which model is active right now |
+| `88% left (880k)` | How much context headroom you have left |
+| `ctx:12%` | How much of the window you've consumed |
+| `$0.0390` | Running cost of the session |
+| `Opus 4.8: 38% left (75k)` | How much of Opus 4.8's 200K window this session would fill — Opus is the most capable but hits its limit fastest, so I always want to know where I stand on it even when running a different model |
+
+The last column is the one I care most about. I run long sessions on Sonnet (1M context) but switch to Opus for hard problems. By the time I switch, the session might already be too big for Opus to hold — that column tells me before I hit the wall.
+
+The script is a plain bash file at `~/.claude/statusline-command.sh`. Claude built the whole thing from a single prompt:
+
+> "Can you help me improve my /statusline adding % left for each model? I want to keep the ctx as well. And in the end of the line I want to show how much left I have for Opus 4.8 because this is the best and the one that is always over."
+
+The full script is in this repo at [`statusline-command.sh`](./statusline-command.sh).
+
+To use it, point your `~/.claude/settings.json` at the script:
+
+```json
+"statusLine": {
+  "type": "command",
+  "command": "bash /Users/<your-user>/.claude/statusline-command.sh"
+}
+```
+
+---
+
 ## Try It Yourself
 
 The plugin structure is straightforward. Start with one skill for the most repetitive thing in your workflow — the thing you find yourself explaining to Claude at the start of every session. Write it as a step-by-step markdown guide, add the frontmatter description that describes when it should activate, and put it in `~/.claude/plugins/<your-plugin>/skills/<name>/SKILL.md`.
